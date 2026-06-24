@@ -2,14 +2,13 @@
 #include <string>
 #include <fstream>
 using namespace std;
-
+/*когда вхожу я должен реалиовать чтобы я мог выйти из режима входа....очищение после выбора пункта////реализовать уникаьные логины....*/
 class User
 {
 public:
     string name;
     int pin;
     int balance;
-    int limit = 10000;
 
     string history[100];
     int countHistory = 0;
@@ -59,17 +58,21 @@ void nameChange()
     cout << "Введите текущее имя: ";
     cin >> oldname;
 
-    if (oldname != users[currentUser].name)
+    if (oldname == users[currentUser].name)
     {
-        cout << "Неверное текущее имя\n";
-    }
-
     cout << "Введите новое имя: ";
     cin >> newname;
 
     users[currentUser].name = newname;
 
     cout << "имя успешно изменено\n";
+
+    }
+    else if (oldname != users[currentUser].name)
+    {
+        cout << "Неверное текущее имя\n";
+        return;
+    }
 
 
     saveUsers();
@@ -82,18 +85,21 @@ void pincodeChange()
     cout << "Введите текущий пинкод: ";
     cin >> oldPin;
 
-    if (oldPin != users[currentUser].pin)
+    if (oldPin == users[currentUser].pin)
+    {
+        cout << "Введите новый пинкод: ";
+        cin >> newPin;
+
+        users[currentUser].pin = newPin;
+
+        cout << "Пинкод успешно изменен\n";
+    }
+    else if (oldPin != users[currentUser].pin)
     {
         cout << "Неверный текущий пинкод\n";
+        return;
     }
-
-    cout << "Введите новый пинкод: ";
-    cin >> newPin;
-
-    users[currentUser].pin = newPin;
-
-    cout << "Пинкод успешно изменен\n";
-
+       
 
     saveUsers();
 }
@@ -158,6 +164,7 @@ void transfers()
 
                 cout << "Перевод выполнен\n";
 
+                saveUsers();
                 return;
             }
 
@@ -166,7 +173,6 @@ void transfers()
         }
     }
 
-    saveUsers();
 
     cout << "Пользователь не найден\n";
 
@@ -195,38 +201,27 @@ bool login()
     string name;
     int pincode;
 
-    int invalidtimes = 0;
+    cout << "Введите имя: ";
+    cin >> name;
 
-    while (invalidtimes < 3)
+    cout << "Введите пинкод: ";
+    cin >> pincode;
+
+    for (int i = 0; i < countUsers; i++)
     {
-        cout << "Введите имя: ";
-        cin >> name;
-
-        cout << "Введите пинкод: ";
-        cin >> pincode;
-
-        for (int i = 0; i < countUsers; i++)
+        if (users[i].name == name && users[i].pin == pincode)
         {
-            if (
-                users[i].name == name &&
-                users[i].pin == pincode
-                )
-            {
-                currentUser = i;
-
-                cout << "Вход выполнен\n";
-
-                return true;
-            }
+            currentUser = i;
+            cout << "Вход выполнен\n";
+            return true;
         }
-
-        invalidtimes++;
-
-        cout << "Неверные данные\n";
-    }
-    cout << "Аккаунт заблокирован\n";
-
+       
+    else 
+    {
+    cout << "Неверные данные\n";
     return false;
+    }
+    }
 }
 /*показать историю*/
 void ShowHistory()
@@ -264,7 +259,7 @@ void menu()
         cout << "4 История\n";
         cout << "5 Перевод\n";
         cout << "6 Сменить пинкод\n";
-        cout << "7 Сменить имя пользователя";
+        cout << "7 Сменить имя пользователя\n";
         cout << "0 Выход\n";
 
 
@@ -366,16 +361,9 @@ void menu()
         }
     }
 }
-
-
-int main()
+void menuuu()
 {
-    setlocale(0, "rus");
-
-    loadUsers();
-
     int action;
-    /*главная менюшка*/
     while (true)
     {
         cout << "\n===== БАНК =====\n";
@@ -404,6 +392,17 @@ int main()
             break;
         }
     }
+    return;
+}
 
-    return 0;
+int main()
+{
+    setlocale(0, "rus");
+
+    menuuu();
+
+    loadUsers();
+
+    /*главная менюшка*/
+   
 }
