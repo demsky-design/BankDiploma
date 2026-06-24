@@ -15,9 +15,48 @@ public:
 };
 
 User users[100];
-
 int countUsers = 0;
 int currentUser = -1;
+
+void saveUsers()
+{
+    ofstream file("users.txt");
+
+    for (int i = 0; i < countUsers; i++)
+    {
+        file
+            << users[i].name << endl
+            << users[i].pin << endl
+            << users[i].balance << endl;
+    }
+
+    file.close();
+
+    cout << "Данные сохранены\n";
+}
+void pincodeChange()
+{
+    int oldPin;
+    int newPin;
+
+    cout << "Введите текущий пинкод: ";
+    cin >> oldPin;
+
+    if (oldPin != users[currentUser].pin)
+    {
+        cout << "Неверный текущий пинкод\n";
+    }
+
+    cout << "Введите новый пинкод: ";
+    cin >> newPin;
+
+    users[currentUser].pin = newPin;
+
+    cout << "Пинкод успешно изменен\n";
+
+
+    saveUsers();
+}
 /*загрузка при запуске*/
 void loadUsers()
 {
@@ -36,22 +75,6 @@ void loadUsers()
     file.close();
 }
 /*сохранить в файл*/
-void saveUsers()
-{
-    ofstream file("users.txt");
-
-    for (int i = 0; i < countUsers; i++)
-    {
-        file
-            << users[i].name << endl
-            << users[i].pin << endl
-            << users[i].balance << endl;
-    }
-
-    file.close();
-
-    cout << "Данные сохранены\n";
-}
 /*переводы */
 void transfers()
 {
@@ -216,6 +239,7 @@ void menu()
         cout << "3 Пополнить\n";
         cout << "4 История\n";
         cout << "5 Перевод\n";
+        cout << "6 Сменить пинкод\n";
         cout << "0 Выход\n";
 
 
@@ -302,6 +326,10 @@ void menu()
         {
             transfers();
         }
+        else if (choice == 6)
+        {
+            pincodeChange();
+        }
 
         else if (choice == 0)
         {
@@ -314,6 +342,8 @@ void menu()
 int main()
 {
     setlocale(0, "rus");
+
+    loadUsers();
 
     int action;
     /*главная менюшка*/
