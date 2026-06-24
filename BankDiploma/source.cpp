@@ -310,6 +310,7 @@ void menu()
     }
 }
 
+
 int main()
 {
     setlocale(0, "rus");
