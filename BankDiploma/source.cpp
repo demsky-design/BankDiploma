@@ -9,6 +9,7 @@ public:
     string name;
     int pin;
     int balance;
+    int limit = 10000;
 
     string history[100];
     int countHistory = 0;
@@ -34,6 +35,45 @@ void saveUsers()
 
     cout << "Данные сохранены\n";
 }
+void loadUsers()
+{
+    ifstream file("users.txt");
+
+    while (
+        file
+        >> users[countUsers].name
+        >> users[countUsers].pin
+        >> users[countUsers].balance
+        )
+    {
+        countUsers++;
+    }
+
+    file.close();
+}
+void nameChange()
+{
+    string oldname;
+    string newname;
+
+    cout << "Введите текущее имя: ";
+    cin >> oldname;
+
+    if (oldname != users[currentUser].name)
+    {
+        cout << "Неверное текущее имя\n";
+    }
+
+    cout << "Введите новое имя: ";
+    cin >> newname;
+
+    users[currentUser].name = newname;
+
+    cout << "имя успешно изменено\n";
+
+
+    saveUsers();
+}
 void pincodeChange()
 {
     int oldPin;
@@ -58,22 +98,6 @@ void pincodeChange()
     saveUsers();
 }
 /*загрузка при запуске*/
-void loadUsers()
-{
-    ifstream file("users.txt");
-
-    while (
-        file
-        >> users[countUsers].name
-        >> users[countUsers].pin
-        >> users[countUsers].balance
-        )
-    {
-        countUsers++;
-    }
-
-    file.close();
-}
 /*сохранить в файл*/
 /*переводы */
 void transfers()
@@ -240,6 +264,7 @@ void menu()
         cout << "4 История\n";
         cout << "5 Перевод\n";
         cout << "6 Сменить пинкод\n";
+        cout << "7 Сменить имя пользователя";
         cout << "0 Выход\n";
 
 
@@ -329,6 +354,10 @@ void menu()
         else if (choice == 6)
         {
             pincodeChange();
+        }
+        else if (choice == 7)
+        {
+            nameChange();
         }
 
         else if (choice == 0)
