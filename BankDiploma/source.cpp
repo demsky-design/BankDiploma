@@ -283,12 +283,25 @@ void transfers() /*переводы*/
 {
     string nametr;
     int moneytr;
-
     cout << "Введите имя получателя: ";
     cin >> nametr;
+    while (true)
+    {
+        try
+        {
+            cout << "Введите сумму: ";
+            cin >> moneytr;
+            break;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Введите только цифры!\n";
 
-    cout << "Введите сумму: ";
-    cin >> moneytr;
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
+
 
     if (moneytr <= 0)
     {
@@ -349,7 +362,18 @@ void menu()
         cout << "7 Сменить имя\n";
         cout << "0 Выход из аккаунта\n";
 
-        cin >> choice;
+        try
+        {
+            cin >> choice;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Неправильный ввод!\n";
+
+            cin.clear();
+            cin.ignore(10000, '\n');
+            continue;
+        }
 
         if (choice == 1)
         {
@@ -360,8 +384,23 @@ void menu()
         else if (choice == 2)
         {
             int sum;
-            cout << "Введите сумму: ";
-            cin >> sum;
+
+            while (true)
+            {
+                try
+                {
+                    cout << "Введите сумму: ";
+                    cin >> sum;
+                    break;
+                }
+                catch (ios_base::failure&)
+                {
+                    cout << "Введите только цифры!\n";
+
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                }
+            }
 
             if (sum > 0 && sum <= users[currentUser].balance)
             {
@@ -369,8 +408,10 @@ void menu()
 
                 users[currentUser].history[users[currentUser].countHistory++] =
                     "Снятие -" + to_string(sum);
+
                 system("cls");
                 cout << "Готово. Баланс: " << users[currentUser].balance << endl;
+
                 saveUsers();
             }
             else
@@ -383,8 +424,23 @@ void menu()
         else if (choice == 3)
         {
             int sum;
-            cout << "Введите сумму: ";
-            cin >> sum;
+
+            while (true)
+            {
+                try
+                {
+                    cout << "Введите сумму: ";
+                    cin >> sum;
+                    break;
+                }
+                catch (ios_base::failure&)
+                {
+                    cout << "Введите только цифры!\n";
+
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                }
+            }
 
             if (sum > 0)
             {
@@ -444,7 +500,18 @@ void menuuu()
         cout << "2 Вход\n";
         cout << "0 Выход\n";
 
-        cin >> action;
+        try
+        {
+            cin >> action;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Неправильный ввод!\n";
+
+            cin.clear();
+            cin.ignore(10000, '\n');
+            continue;
+        }
 
         if (action == 1)
         {
