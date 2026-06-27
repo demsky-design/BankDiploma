@@ -198,6 +198,15 @@ void registerUsers()
 /*войти в акк*/
 bool login()
 {
+    int choice;
+
+    cout << "1 Войти\n";
+    cout << "0 Назад\n";
+    cin >> choice;
+
+    if (choice == 0)
+        return false;
+
     string name;
     int pincode;
 
@@ -215,13 +224,10 @@ bool login()
             cout << "Вход выполнен\n";
             return true;
         }
-       
-    else 
-    {
+    }
+
     cout << "Неверные данные\n";
     return false;
-    }
-    }
 }
 /*показать историю*/
 void ShowHistory()
