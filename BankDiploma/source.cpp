@@ -321,9 +321,16 @@ void menu()
 
                 users[currentUser].history[users[currentUser].countHistory++] =
                     "Пополнение +" + to_string(sum);
+
                 system("cls");
                 cout << "Баланс: " << users[currentUser].balance << endl;
+
                 saveUsers();
+            }
+            else
+            {
+                system("cls");
+                cout << "Сумма должна быть больше нуля!\n";
             }
         }
 
