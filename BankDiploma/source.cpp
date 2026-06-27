@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+
 using namespace std;
-/*когда вхожу я должен реалиовать чтобы я мог выйти из режима входа....очищение после выбора пункта////реализовать уникаьные логины....*/
+
 class User
 {
 public:
@@ -18,7 +19,20 @@ User users[100];
 int countUsers = 0;
 int currentUser = -1;
 
-void saveUsers()
+bool loginExists(string name)/*уникальные имена*/
+{
+    for (int i = 0; i < countUsers; i++)
+    {
+        if (users[i].name == name)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void saveUsers()/*сохранение пользователей*/
 {
     ofstream file("users.txt");
 
@@ -31,12 +45,13 @@ void saveUsers()
     }
 
     file.close();
-
-    cout << "Данные сохранены\n";
 }
-void loadUsers()
+
+void loadUsers()/*загрузка пользователей*/
 {
     ifstream file("users.txt");
+
+    countUsers = 0;
 
     while (
         file
@@ -50,138 +65,25 @@ void loadUsers()
 
     file.close();
 }
-void nameChange()
+
+void registerUsers()/*регистрация*/
 {
-    string oldname;
-    string newname;
+    string name;
 
-    cout << "Введите текущее имя: ";
-    cin >> oldname;
-
-    if (oldname == users[currentUser].name)
+    while (true)
     {
-    cout << "Введите новое имя: ";
-    cin >> newname;
+        cout << "Введите имя: ";
+        cin >> name;
 
-    users[currentUser].name = newname;
-
-    cout << "имя успешно изменено\n";
-
-    }
-    else if (oldname != users[currentUser].name)
-    {
-        cout << "Неверное текущее имя\n";
-        return;
-    }
-
-
-    saveUsers();
-}
-void pincodeChange()
-{
-    int oldPin;
-    int newPin;
-
-    cout << "Введите текущий пинкод: ";
-    cin >> oldPin;
-
-    if (oldPin == users[currentUser].pin)
-    {
-        cout << "Введите новый пинкод: ";
-        cin >> newPin;
-
-        users[currentUser].pin = newPin;
-
-        cout << "Пинкод успешно изменен\n";
-    }
-    else if (oldPin != users[currentUser].pin)
-    {
-        cout << "Неверный текущий пинкод\n";
-        return;
-    }
-       
-
-    saveUsers();
-}
-/*загрузка при запуске*/
-/*сохранить в файл*/
-/*переводы */
-void transfers()
-{
-    string nametr;
-    int moneytr;
-
-    cout << "Введите имя человека: ";
-    cin >> nametr;
-
-    cout << "Введите сумму: ";
-    cin >> moneytr;
-
-    if (moneytr <= 0)
-    {
-        cout << "Неверная сумма\n";
-        return;
-    }
-
-    for (int i = 0; i < countUsers; i++)
-    {
-        if (users[i].name == nametr)
+        if (!loginExists(name))
         {
-            if (i == currentUser)
-            {
-
-
-                cout << "Нельзя перевести самому себе\n";
-                return;
-            }
-
-            if (users[currentUser].balance >= moneytr)
-            {
-                users[currentUser].balance -= moneytr;
-
-                users[i].balance += moneytr;
-
-                users[currentUser]
-                    .history[users[currentUser].countHistory]
-                    =
-                    "Перевод -> "
-                    + nametr
-                    + " -"
-                    + to_string(moneytr);
-
-                users[currentUser].countHistory++;
-
-
-                users[i]
-                    .history[users[i].countHistory]
-                    =
-                    "Получено <- "
-                    + users[currentUser].name
-                    + " +"
-                    + to_string(moneytr);
-
-                users[i].countHistory++;
-
-                cout << "Перевод выполнен\n";
-
-                saveUsers();
-                return;
-            }
-
-            cout << "Недостаточно денег\n";
-            return;
+            break;
         }
+        system("cls");
+        cout << "Такой логин уже существует.\n";
     }
 
-
-    cout << "Пользователь не найден\n";
-
-}
-/*зарегаться*/
-void registerUsers()
-{
-    cout << "Введите имя: ";
-    cin >> users[countUsers].name;
+    users[countUsers].name = name;
 
     cout << "Введите пинкод: ";
     cin >> users[countUsers].pin;
@@ -191,23 +93,13 @@ void registerUsers()
 
     countUsers++;
 
-    cout << "Аккаунт создан\n";
-
+    system("cls");
+    cout << "Аккаунт создан.\n";
     saveUsers();
 }
-/*войти в акк*/
 
-bool login()
+bool login()/*логин*/
 {
-    int choice;
-
-    cout << "1 Войти\n";
-    cout << "0 Назад\n";
-    cin >> choice;
-
-    if (choice == 0)
-        return false;
-
     string name;
     int pincode;
 
@@ -219,39 +111,157 @@ bool login()
 
     for (int i = 0; i < countUsers; i++)
     {
-        if (users[i].name == name && users[i].pin == pincode)
+        if (users[i].name == name &&
+            users[i].pin == pincode)
         {
             currentUser = i;
-            cout << "Вход выполнен\n";
+
+            system("cls");
+
+            cout << "Вход выполнен.\n";
             return true;
         }
     }
 
-    cout << "Неверные данные\n";
+    system("cls");
+
+    cout << "Неверное имя или пинкод.\n";
+
     return false;
 }
-/*показать историю*/
+
 void ShowHistory()
 {
     if (users[currentUser].countHistory == 0)
     {
-        cout << "История пуста\n";
-
+        cout << "История пуста.\n";
         return;
     }
 
-    for (
-        int i = 0;
-        i < users[currentUser].countHistory;
-        i++
-        )
+    system("cls");
+
+    cout << "===== История операций =====\n";
+
+    for (int i = 0; i < users[currentUser].countHistory; i++)
     {
-        cout
-            << users[currentUser].history[i]
-            << endl;
+        cout << i + 1 << ". " << users[currentUser].history[i] << endl;
     }
 }
-/*менюшка подглавная*/
+void pincodeChange()/*смена пинкода*/
+{
+    int oldPin;
+    int newPin;
+
+    cout << "Введите текущий пинкод: ";
+    cin >> oldPin;
+
+    if (oldPin != users[currentUser].pin)
+    {
+        system("cls");
+        cout << "Неверный текущий пинкод\n";
+        return;
+    }
+
+    cout << "Введите новый пинкод: ";
+    cin >> newPin;
+
+    users[currentUser].pin = newPin;
+
+    system("cls");
+    cout << "Пинкод успешно изменен\n";
+
+    saveUsers();
+}
+
+void nameChange()/*смена имени*/
+{
+    string oldname;
+    string newname;
+
+    cout << "Введите текущее имя: ";
+    cin >> oldname;
+
+    if (oldname != users[currentUser].name)
+    {
+        system("cls");
+        cout << "Неверное текущее имя\n";
+        return;
+    }
+
+    while (true)
+    {
+        system("cls");
+        cout << "Введите новое имя: ";
+        cin >> newname;
+
+        if (!loginExists(newname))
+        {
+            break;
+        }
+        cout << "Такой логин уже существует.\n";
+    }
+
+    users[currentUser].name = newname;
+    system("cls");
+    cout << "Имя успешно изменено\n";
+
+    saveUsers();
+}
+
+void transfers() /*переводы*/
+{
+    string nametr;
+    int moneytr;
+
+    cout << "Введите имя получателя: ";
+    cin >> nametr;
+
+    cout << "Введите сумму: ";
+    cin >> moneytr;
+
+    if (moneytr <= 0)
+    {
+        system("cls");
+        cout << "Неверная сумма\n";
+        return;
+    }
+
+    for (int i = 0; i < countUsers; i++)
+    {
+        if (users[i].name == nametr)
+        {
+            if (i == currentUser)
+            {
+                system("cls");
+                cout << "Нельзя перевести самому себе\n";
+                return;
+            }
+
+            if (users[currentUser].balance < moneytr)
+            {
+                system("cls");
+                cout << "Недостаточно средств\n";
+                return;
+            }
+
+            users[currentUser].balance -= moneytr;
+            users[i].balance += moneytr;
+
+            users[currentUser].history[users[currentUser].countHistory++] =
+                "Перевод -> " + nametr + " -" + to_string(moneytr);
+            users[i].history[users[i].countHistory++] =
+                "Получено <- " + users[currentUser].name + " +" + to_string(moneytr);
+
+            system("cls");
+            cout << "Перевод выполнен\n";
+
+            saveUsers();
+            return;
+        }
+    }
+    system("cls");
+    cout << "Пользователь не найден\n";
+}
 void menu()
 {
     int choice;
@@ -259,67 +269,49 @@ void menu()
     while (true)
     {
         cout << "\n===== МЕНЮ =====\n";
-
         cout << "1 Баланс\n";
         cout << "2 Снять\n";
         cout << "3 Пополнить\n";
         cout << "4 История\n";
         cout << "5 Перевод\n";
         cout << "6 Сменить пинкод\n";
-        cout << "7 Сменить имя пользователя\n";
-        cout << "0 Выход\n";
-
+        cout << "7 Сменить имя\n";
+        cout << "0 Выход из аккаунта\n";
 
         cin >> choice;
 
         if (choice == 1)
         {
-            cout
-                << "Баланс: "
-                << users[currentUser].balance
-                << endl;
+            system("cls");
+            cout << "Баланс: " << users[currentUser].balance << endl;
         }
 
         else if (choice == 2)
         {
-            int summa;
-
+            int sum;
             cout << "Введите сумму: ";
-            cin >> summa;
+            cin >> sum;
 
-            if (
-                summa > 0 &&
-                summa <= users[currentUser].balance
-                )
+            if (sum > 0 && sum <= users[currentUser].balance)
             {
-                users[currentUser].balance -= summa;
+                users[currentUser].balance -= sum;
 
-                users[currentUser]
-                    .history[users[currentUser].countHistory]
-                    =
-                    "Снятие -"
-                    + to_string(summa);
-
-                users[currentUser].countHistory++;
-
-                cout
-                    << "Остаток: "
-                    << users[currentUser].balance
-                    << endl;
+                users[currentUser].history[users[currentUser].countHistory++] =
+                    "Снятие -" + to_string(sum);
+                system("cls");
+                cout << "Готово. Баланс: " << users[currentUser].balance << endl;
+                saveUsers();
             }
-
             else
             {
+                system("cls");
                 cout << "Недостаточно средств\n";
             }
-
-            saveUsers();
         }
 
         else if (choice == 3)
         {
             int sum;
-
             cout << "Введите сумму: ";
             cin >> sum;
 
@@ -327,21 +319,12 @@ void menu()
             {
                 users[currentUser].balance += sum;
 
-                users[currentUser]
-                    .history[users[currentUser].countHistory]
-                    =
-                    "Пополнение +"
-                    + to_string(sum);
-
-                users[currentUser].countHistory++;
-
-                cout
-                    << "Баланс: "
-                    << users[currentUser].balance
-                    << endl;
+                users[currentUser].history[users[currentUser].countHistory++] =
+                    "Пополнение +" + to_string(sum);
+                system("cls");
+                cout << "Баланс: " << users[currentUser].balance << endl;
+                saveUsers();
             }
-
-            saveUsers();
         }
 
         else if (choice == 4)
@@ -353,10 +336,12 @@ void menu()
         {
             transfers();
         }
+
         else if (choice == 6)
         {
             pincodeChange();
         }
+
         else if (choice == 7)
         {
             nameChange();
@@ -364,17 +349,19 @@ void menu()
 
         else if (choice == 0)
         {
+            currentUser = -1;
             break;
         }
     }
 }
+
 void menuuu()
 {
     int action;
+
     while (true)
     {
         cout << "\n===== БАНК =====\n";
-
         cout << "1 Регистрация\n";
         cout << "2 Вход\n";
         cout << "0 Выход\n";
@@ -385,7 +372,6 @@ void menuuu()
         {
             registerUsers();
         }
-
         else if (action == 2)
         {
             if (login())
@@ -393,23 +379,22 @@ void menuuu()
                 menu();
             }
         }
-
         else if (action == 0)
         {
             break;
         }
     }
-    return;
 }
 
 int main()
 {
     setlocale(0, "rus");
 
-    menuuu();
-
     loadUsers();
 
-    /*главная менюшка*/
-   
+    menuuu();
+
+    saveUsers();
+
+    return 0;
 }
