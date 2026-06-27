@@ -66,7 +66,7 @@ void loadUsers()/*загрузка пользователей*/
     file.close();
 }
 
-void registerUsers()/*регистрация*/
+void registerUsers()
 {
     string name;
 
@@ -76,38 +76,78 @@ void registerUsers()/*регистрация*/
         cin >> name;
 
         if (!loginExists(name))
-        {
             break;
-        }
+
         system("cls");
         cout << "Такой логин уже существует.\n";
     }
 
     users[countUsers].name = name;
 
-    cout << "Введите пинкод: ";
-    cin >> users[countUsers].pin;
+    while (true)
+    {
+        try
+        {
+            cout << "Введите пинкод: ";
+            cin >> users[countUsers].pin;
 
-    cout << "Введите стартовый баланс: ";
-    cin >> users[countUsers].balance;
+            cout << "Введите стартовый баланс: ";
+            cin >> users[countUsers].balance;
+
+            break;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Ошибка ввода! Используйте только цифры.\n";
+
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
 
     countUsers++;
 
     system("cls");
     cout << "Аккаунт создан.\n";
+
     saveUsers();
 }
-
-bool login()/*логин*/
+bool correctName(string name)
+{
+    for (int i = 0; i < name.length(); i++)
+    {
+        if (isdigit(name[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+bool login()
 {
     string name;
     int pincode;
 
-    cout << "Введите имя: ";
-    cin >> name;
+    while (true)
+    {
+        try
+        {
+            cout << "Введите имя: ";
+            cin >> name;
 
-    cout << "Введите пинкод: ";
-    cin >> pincode;
+            cout << "Введите пинкод: ";
+            cin >> pincode;
+
+            break;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Ошибка! Пинкод должен состоять только из цифр.\n";
+
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
 
     for (int i = 0; i < countUsers; i++)
     {
@@ -117,19 +157,16 @@ bool login()/*логин*/
             currentUser = i;
 
             system("cls");
-
             cout << "Вход выполнен.\n";
             return true;
         }
     }
 
     system("cls");
-
     cout << "Неверное имя или пинкод.\n";
 
     return false;
 }
-
 void ShowHistory()
 {
     if (users[currentUser].countHistory == 0)
@@ -147,13 +184,27 @@ void ShowHistory()
         cout << i + 1 << ". " << users[currentUser].history[i] << endl;
     }
 }
-void pincodeChange()/*смена пинкода*/
+void pincodeChange()
 {
     int oldPin;
     int newPin;
 
-    cout << "Введите текущий пинкод: ";
-    cin >> oldPin;
+    while (true)
+    {
+        try
+        {
+            cout << "Введите текущий пинкод: ";
+            cin >> oldPin;
+
+            break;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Введите только цифры!\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
 
     if (oldPin != users[currentUser].pin)
     {
@@ -162,8 +213,22 @@ void pincodeChange()/*смена пинкода*/
         return;
     }
 
-    cout << "Введите новый пинкод: ";
-    cin >> newPin;
+    while (true)
+    {
+        try
+        {
+            cout << "Введите новый пинкод: ";
+            cin >> newPin;
+
+            break;
+        }
+        catch (ios_base::failure&)
+        {
+            cout << "Введите только цифры!\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
 
     users[currentUser].pin = newPin;
 
@@ -172,8 +237,7 @@ void pincodeChange()/*смена пинкода*/
 
     saveUsers();
 }
-
-void nameChange()/*смена имени*/
+void nameChange()
 {
     string oldname;
     string newname;
@@ -190,24 +254,31 @@ void nameChange()/*смена имени*/
 
     while (true)
     {
-        system("cls");
         cout << "Введите новое имя: ";
         cin >> newname;
 
-        if (!loginExists(newname))
+        if (!correctName(newname))
         {
-            break;
+            cout << "Имя не должно содержать цифры!\n";
+            continue;
         }
-        cout << "Такой логин уже существует.\n";
+
+        if (loginExists(newname))
+        {
+            cout << "Такой логин уже существует!\n";
+            continue;
+        }
+
+        break;
     }
 
     users[currentUser].name = newname;
+
     system("cls");
     cout << "Имя успешно изменено\n";
 
     saveUsers();
 }
-
 void transfers() /*переводы*/
 {
     string nametr;
@@ -396,6 +467,7 @@ void menuuu()
 int main()
 {
     setlocale(0, "rus");
+    cin.exceptions(ios::failbit);
 
     loadUsers();
 
